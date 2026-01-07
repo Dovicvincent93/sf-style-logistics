@@ -11,11 +11,11 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MyQuotes from "./pages/MyQuotes";
 
-import AdminLayout from "./pages/admin/AdminLayout";
-import Dashboard from "./pages/admin/Dashboard";
-import Quotes from "./pages/admin/Quotes";
-import Shipments from "./pages/admin/Shipments";
-import ShipmentDetails from "./pages/admin/ShipmentDetails";
+import AdminLayout from "./pages/Admin/AdminLayout";
+import Dashboard from "./pages/Admin/Dashboard";
+import Quotes from "./pages/Admin/Quotes";
+import Shipments from "./pages/Admin/Shipments";
+import ShipmentDetails from "./pages/Admin/ShipmentDetails";
 import Inbox from "./pages/admin/Inbox";
 import Careers from "./pages/Careers";
 import Sustainability from "./pages/Sustainability";
