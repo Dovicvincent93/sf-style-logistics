@@ -20,36 +20,101 @@
   margin: auto;
   padding-bottom: 40px;
   border-bottom: 1px solid #334155;
+  align-items: start;
 }
 
 /* =========================
    FOOTER COLUMNS
 ========================= */
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* Headings */
 .footer-column h4 {
   color: #ffffff;
   font-size: 18px;
   margin-bottom: 14px;
 }
 
+/* Paragraphs (BRAND + NEWSLETTER text) */
+/* Paragraphs — HARD ALIGN FIX */
 .footer-column p {
-  margin: 8px 0;
-  line-height: 1.7;
+  margin: 6px 0;
+  line-height: 1.6;
   color: #cbd5e1;
+
+  display: block;          /* 🔑 force block formatting */
+  width: 100%;             /* 🔑 full column width */
+  text-align: left;        /* 🔑 no visual centering */
+  text-indent: 0;          /* 🔑 remove hidden indent */
+  padding: 0;              /* 🔑 no phantom spacing */
 }
+
 
 /* =========================
    LINKS
 ========================= */
 .footer-column a {
   display: block;
+  margin: 6px 0;
   color: #cbd5e1;
-  margin: 8px 0;
   text-decoration: none;
-  transition: color 0.3s ease;
+  position: relative;
+  transition: color 0.25s ease;
 }
 
 .footer-column a:hover {
   color: #ffd400;
+}
+
+/* Hover underline animation */
+.footer-column a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: #ffd400;
+  transition: width 0.25s ease;
+}
+
+.footer-column a:hover::after {
+  width: 100%;
+}
+
+/* =========================
+   SUPPORT (ICON + TEXT FIX)
+========================= */
+.support-item {
+  display: flex;
+  align-items: center;      /* 🔑 keeps icon + text together */
+  gap: 6px;
+  margin: 4px 0;
+  padding: 0;
+  line-height: 1.3;
+}
+
+/* Emoji normalization */
+.support-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Ensure text never wraps under icon */
+.support-item span:last-child {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 /* =========================
@@ -59,6 +124,7 @@
   display: flex;
   gap: 8px;
   margin-top: 12px;
+  width: 100%;
 }
 
 .footer-newsletter input {
@@ -92,19 +158,36 @@
   margin-top: 32px;
   padding-top: 16px;
   border-top: 1px solid #334155;
-  text-align: center;
   color: #94a3b8;
   font-size: 13px;
+  /* margin-left: 100px; */
 }
 
-/* LEGAL LINKS */
+/* Bottom layout */
+.footer-bottom-inner {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-copy {
+  white-space: nowrap;
+}
+
+/* Legal links */
 .footer-legal {
-  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 100px;
 }
 
 .footer-legal a {
   color: #94a3b8;
-  margin: 0 6px;
   text-decoration: none;
   transition: color 0.25s ease;
 }
@@ -114,7 +197,6 @@
 }
 
 .footer-legal span {
-  margin: 0 6px;
   color: #64748b;
 }
 
@@ -122,10 +204,10 @@
    SOCIAL LINKS
 ========================= */
 .footer-socials {
-  margin-top: 12px;
+  margin-top: 16px;
   display: flex;
   justify-content: center;
-  gap: 14px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
@@ -153,15 +235,11 @@
 }
 
 /* =========================
-   RESPONSIVE
+   RESPONSIVE (MOBILE)
 ========================= */
 @media (max-width: 768px) {
   .footer {
     padding: 50px 20px 30px;
-  }
-
-  .footer-top {
-    gap: 32px;
   }
 
   .footer-newsletter {
@@ -172,7 +250,8 @@
     width: 100%;
   }
 
-  .footer-socials {
-    gap: 10px;
+  .footer-bottom-inner {
+    flex-direction: column;
+    text-align: center;
   }
 }

@@ -16,16 +16,21 @@
   align-items: center;
 }
 
+/* ================= LOGO ================= */
 .logo {
   font-size: 24px;
   font-weight: 700;
   color: white;
   text-decoration: none;
+
+  margin-left: -20px; /* 👈 moves logo left */
 }
 
 .logo span {
   color: #ffd400;
+  padding-left: 0px;  /* 👈 removes extra spacing */
 }
+
 
 /* ================= DESKTOP NAV ================= */
 .nav-links {
@@ -34,9 +39,8 @@
   gap: 26px;
 }
 
-.nav-links a,
-.nav-title,
-.nav-title-link {
+/* NORMAL LINKS */
+.nav-links a {
   color: white;
   text-decoration: none;
   font-weight: 500;
@@ -44,7 +48,34 @@
   white-space: nowrap;
 }
 
-/* ================= FIX BLUR / FADE ISSUES ================= */
+/* ================= SERVICES & ACCOUNT TITLE ================= */
+.nav-title,
+.nav-title-link {
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: inherit;
+  white-space: nowrap;
+}
+
+/* 🔑 CRITICAL FIX — make Services & Account match links */
+.nav-links > .nav-mega > .nav-title,
+.nav-links > .nav-mega > .nav-title-link {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  text-align: left;
+}
+
+/* Hover background like normal links */
+.nav-links > .nav-mega:hover > .nav-title,
+.nav-links > .nav-mega:hover > .nav-title-link {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ================= FIX BLUR / FADE ================= */
 button,
 .logout-btn {
   opacity: 1;
@@ -52,7 +83,7 @@ button,
   pointer-events: auto;
 }
 
-/* ================= LOGOUT BUTTON (DESKTOP) ================= */
+/* ================= LOGOUT BUTTON ================= */
 .logout-btn {
   background: #ffd400;
   border: none;
@@ -68,14 +99,15 @@ button,
   background: #facc15;
 }
 
-/* ================= DROPDOWNS (DESKTOP) ================= */
+/* ================= MEGA MENU (DESKTOP) ================= */
 .navbar .nav-mega {
   position: relative;
 }
 
+/* CLOSED STATE */
 .navbar .nav-mega .mega-menu {
   position: absolute;
-  top: 130%;
+  top: 100%;
   left: 0;
   background: white;
   width: 320px;
@@ -85,36 +117,64 @@ button,
   gap: 14px;
   border-radius: 12px;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.18);
+
   opacity: 0;
-  transform: translateY(15px);
+  visibility: hidden;
   pointer-events: none;
-  transition: all 0.3s ease;
+  transform: translateY(12px);
+
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    visibility 0s linear 0.25s;
 }
 
+/* OPEN STATE */
 .navbar .nav-mega.open .mega-menu {
   opacity: 1;
-  transform: translateY(0);
+  visibility: visible;
   pointer-events: auto;
+  transform: translateY(0);
+  transition-delay: 0s;
 }
 
+/* MEGA MENU CONTENT */
 .mega-menu h4 {
   color: rgb(22, 85, 135);
   margin-bottom: 6px;
 }
 
-.mega-menu a {
+.mega-menu button {
+  background: none;
+  border: none;
+  padding: 0;
   color: #333;
   font-size: 14px;
-  text-decoration: none;
+  cursor: pointer;
+  text-align: left;
 }
 
-.mega-menu a:hover {
+.mega-menu button:hover {
   font-weight: 600;
 }
 
 /* ACCOUNT MENU SIZE */
 .mega-menu.small {
   width: 260px;
+}
+
+/* ACCOUNT LINKS */
+.mega-menu a {
+  color: #333;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 4px 0;
+  display: block;
+}
+
+.mega-menu a:hover {
+  font-weight: 600;
 }
 
 /* ================= HAMBURGER ================= */
@@ -142,7 +202,7 @@ button,
     display: flex;
   }
 
-  /* HIDE NAV LINKS BY DEFAULT */
+  /* MOBILE MENU */
   .nav-links {
     display: none;
     position: absolute;
@@ -155,24 +215,34 @@ button,
     padding: 12px 0;
   }
 
-  /* SHOW WHEN HAMBURGER CLICKED */
   .nav-links.show {
     display: flex;
   }
 
-  /* STACK LINKS CLEANLY */
+  /* STACK ITEMS */
   .nav-links > a,
   .nav-links > .nav-mega {
     width: 100%;
-    padding: 14px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   }
 
   .nav-links a {
+    padding: 14px 20px;
     width: 100%;
   }
 
-  /* MOBILE DROPDOWNS — COLLAPSED BY DEFAULT */
+  /* 🔑 Mobile Services / Account background */
+  .nav-links > .nav-mega > .nav-title,
+  .nav-links > .nav-mega > .nav-title-link {
+    padding: 14px 20px;
+  }
+
+  .nav-links > .nav-mega.open > .nav-title,
+  .nav-links > .nav-mega.open > .nav-title-link {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  /* MOBILE MEGA MENU */
   .navbar .nav-mega .mega-menu {
     position: static;
     width: 100%;
@@ -180,33 +250,37 @@ button,
     box-shadow: none;
     border-radius: 0;
     transform: none;
+
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
     max-height: 0;
     overflow: hidden;
     padding: 0 20px;
+
+    transition:
+      max-height 0.3s ease,
+      opacity 0.3s ease;
   }
 
-  /* OPEN DROPDOWN ONLY WHEN CLICKED */
   .navbar .nav-mega.open .mega-menu {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
     max-height: 600px;
     padding: 12px 20px;
   }
 
-  /* MOBILE DROPDOWN TEXT */
   .mega-menu h4 {
     color: #ffd400;
     margin-top: 10px;
   }
 
-  .mega-menu a {
+  .mega-menu button {
     color: white;
     padding: 6px 0;
   }
 
-  /* MOBILE LOGOUT BUTTON */
   .logout-btn {
     background: #ffd400;
     color: #000;

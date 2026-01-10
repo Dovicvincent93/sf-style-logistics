@@ -1,66 +1,131 @@
+/* ================= PRIVACY PAGE ================= */
 .privacy-page {
-  background: #f8fafc;
-  padding-bottom: 80px;
-}
-
-/* HERO */
-.privacy-hero {
-  background: linear-gradient(135deg, #0f172a, #165587);
-  color: white;
-  padding: 90px 24px;
-  text-align: center;
-}
-
-.privacy-hero h1 {
-  font-size: 42px;
-  margin-bottom: 12px;
-}
-
-.privacy-hero p {
-  font-size: 18px;
-  max-width: 780px;
-  margin: auto;
-  color: #e5e7eb;
-}
-
-/* CONTAINER */
-.privacy-container {
-  max-width: 1000px;
-  margin: 60px auto 0;
-  padding: 0 24px;
-}
-
-/* SECTIONS */
-.privacy-section {
-  margin-bottom: 42px;
-}
-
-.privacy-section h2 {
-  font-size: 22px;
-  margin-bottom: 12px;
+  background: #ffffff;
   color: #0f172a;
 }
 
-.privacy-section p,
-.privacy-section li {
-  font-size: 15px;
+/* ================= HERO ================= */
+.privacy-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 130px 24px;
+  text-align: center;
+  color: white;
+}
+
+/* HERO BACKGROUND (SUBTLE, TRUST-FOCUSED) */
+.privacy-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)),
+    url("https://images.unsplash.com/photo-1555949963-aa79dcee981c");
+  background-size: 110%;
+  background-position: center;
+  animation: privacyZoom 26s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+/* HERO CONTENT */
+.privacy-hero h1,
+.privacy-hero p {
+  position: relative;
+  z-index: 1;
+  animation: privacyTextUp 1s ease forwards;
+}
+
+.privacy-hero h1 {
+  font-size: 44px;
+  margin-bottom: 14px;
+}
+
+.privacy-hero p {
+  max-width: 760px;
+  margin: auto;
+  font-size: 17px;
+  color: #e5e7eb;
+  opacity: 0;
+  animation-delay: 0.25s;
+}
+
+/* ================= ANIMATIONS ================= */
+
+/* Gentle Ken Burns zoom (VERY subtle for trust pages) */
+@keyframes privacyZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+/* Text fade + slide */
+@keyframes privacyTextUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= CONTENT ================= */
+.privacy-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 90px 24px;
+}
+
+.privacy-section {
+  margin-bottom: 60px;
+}
+
+.privacy-section h2 {
+  font-size: 26px;
+  margin-bottom: 14px;
+  color: rgb(22, 85, 135);
+}
+
+.privacy-section p {
+  font-size: 16.5px;
   line-height: 1.8;
-  color: #475569;
+  color: #334155;
 }
 
 .privacy-section ul {
-  padding-left: 18px;
+  margin-top: 14px;
+  padding-left: 20px;
 }
 
 .privacy-section li {
   margin-bottom: 8px;
+  color: #334155;
 }
 
-/* FOOTER */
+/* ================= FOOTER ================= */
 .privacy-footer {
-  margin-top: 50px;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
-  font-size: 14px;
-  color: #64748b;
+  margin-top: 80px;
+  padding: 30px;
+  background: #f8fafc;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.privacy-footer strong {
+  color: rgb(22, 85, 135);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .privacy-hero h1 {
+    font-size: 32px;
+  }
+
+  .privacy-container {
+    padding: 70px 20px;
+  }
 }

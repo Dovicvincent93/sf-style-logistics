@@ -1,66 +1,131 @@
+/* ================= TERMS PAGE ================= */
 .terms-page {
-  background: #f8fafc;
-  padding-bottom: 80px;
-}
-
-/* HERO */
-.terms-hero {
-  background: linear-gradient(135deg, #0f172a, #165587);
-  color: white;
-  padding: 90px 24px;
-  text-align: center;
-}
-
-.terms-hero h1 {
-  font-size: 42px;
-  margin-bottom: 12px;
-}
-
-.terms-hero p {
-  font-size: 18px;
-  max-width: 780px;
-  margin: auto;
-  color: #e5e7eb;
-}
-
-/* CONTAINER */
-.terms-container {
-  max-width: 1000px;
-  margin: 60px auto 0;
-  padding: 0 24px;
-}
-
-/* SECTIONS */
-.terms-section {
-  margin-bottom: 42px;
-}
-
-.terms-section h2 {
-  font-size: 22px;
-  margin-bottom: 12px;
+  background: #ffffff;
   color: #0f172a;
 }
 
-.terms-section p,
-.terms-section li {
-  font-size: 15px;
+/* ================= HERO ================= */
+.terms-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 130px 24px;
+  text-align: center;
+  color: white;
+}
+
+/* HERO BACKGROUND (STRUCTURED, NEUTRAL) */
+.terms-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)),
+    url("https://images.unsplash.com/photo-1497366216548-37526070297c");
+  background-size: 110%;
+  background-position: center;
+  animation: termsZoom 28s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+/* HERO CONTENT */
+.terms-hero h1,
+.terms-hero p {
+  position: relative;
+  z-index: 1;
+  animation: termsTextUp 1s ease forwards;
+}
+
+.terms-hero h1 {
+  font-size: 44px;
+  margin-bottom: 14px;
+}
+
+.terms-hero p {
+  max-width: 760px;
+  margin: auto;
+  font-size: 17px;
+  color: #e5e7eb;
+  opacity: 0;
+  animation-delay: 0.25s;
+}
+
+/* ================= ANIMATIONS ================= */
+
+/* Very subtle Ken Burns zoom */
+@keyframes termsZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07);
+  }
+}
+
+/* Text fade + slide */
+@keyframes termsTextUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= CONTENT ================= */
+.terms-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 90px 24px;
+}
+
+.terms-section {
+  margin-bottom: 60px;
+}
+
+.terms-section h2 {
+  font-size: 26px;
+  margin-bottom: 14px;
+  color: rgb(22, 85, 135);
+}
+
+.terms-section p {
+  font-size: 16.5px;
   line-height: 1.8;
-  color: #475569;
+  color: #334155;
 }
 
 .terms-section ul {
-  padding-left: 18px;
+  margin-top: 14px;
+  padding-left: 20px;
 }
 
 .terms-section li {
   margin-bottom: 8px;
+  color: #334155;
 }
 
-/* FOOTER */
+/* ================= FOOTER ================= */
 .terms-footer {
-  margin-top: 50px;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
-  font-size: 14px;
-  color: #64748b;
+  margin-top: 80px;
+  padding: 30px;
+  background: #f8fafc;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.terms-footer strong {
+  color: rgb(22, 85, 135);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .terms-hero h1 {
+    font-size: 32px;
+  }
+
+  .terms-container {
+    padding: 70px 20px;
+  }
 }

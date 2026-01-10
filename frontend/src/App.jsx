@@ -1,7 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import ScrollToTop from "./components/ScrollToTop"; 
+// import ScrollToTop from "./components/ScrollToTop";
+import RouteScrollToTop from "./components/RouteScrollToTop";
+import ScrollToHash from "./components/ScrollToHash";
 
 import Home from "./pages/Home";
 import Track from "./pages/Track";
@@ -17,6 +19,7 @@ import Quotes from "./pages/Admin/Quotes";
 import Shipments from "./pages/Admin/Shipments";
 import ShipmentDetails from "./pages/Admin/ShipmentDetails";
 import Inbox from "./pages/Admin/Inbox";
+
 import Careers from "./pages/Careers";
 import Sustainability from "./pages/Sustainability";
 import Investors from "./pages/Investors";
@@ -42,8 +45,12 @@ export default function App() {
     <>
       <Navbar />
 
+      {/* ✅ SCROLL HANDLERS */}
+      {/* <RouteScrollToTop /> */}
+      <ScrollToHash />
+
       <Routes>
-        {/* PUBLIC */}
+        {/* ===== PUBLIC ROUTES ===== */}
         <Route path="/" element={<Home />} />
         <Route path="/track" element={<Track />} />
         <Route path="/about" element={<About />} />
@@ -60,8 +67,7 @@ export default function App() {
         <Route path="/compliance" element={<Compliance />} />
         <Route path="/privacy" element={<Privacy />} />
 
-
-        {/* ADMIN */}
+        {/* ===== ADMIN ROUTES ===== */}
         <Route
           path="/admin"
           element={
@@ -75,12 +81,11 @@ export default function App() {
           <Route path="shipments" element={<Shipments />} />
           <Route path="shipments/:id" element={<ShipmentDetails />} />
           <Route path="inbox" element={<Inbox />} />
-
         </Route>
       </Routes>
 
-      {/* ✅ SCROLL TO TOP BUTTON (GLOBAL) */}
-      <ScrollToTop />
+      {/* ✅ FLOATING BACK TO TOP BUTTON */}
+      {/* <ScrollToTop /> */}
 
       <Footer />
     </>

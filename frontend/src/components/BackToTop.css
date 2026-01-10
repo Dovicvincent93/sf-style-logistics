@@ -1,0 +1,14 @@
+.back-to-top {
+  position: fixed;
+  bottom: 160px; /* ABOVE floating tracker */
+  right: 20px;
+  background: #ffd400;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1000;
+}

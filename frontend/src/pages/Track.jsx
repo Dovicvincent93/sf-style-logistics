@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import "./Track.css";
 import { useLocation } from "react-router-dom";
 import api from "../api/axios";
 import {
@@ -22,8 +23,39 @@ L.Icon.Default.mergeOptions({
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
+/* ================= STATUS ICONS ================= */
+const statusIcons = {
+  Pending: new L.Icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/594/594846.png",
+    iconSize: [28, 28],
+  }),
+  "In Transit": new L.Icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+    iconSize: [30, 30],
+  }),
+  "Custom Clearance": new L.Icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/3063/3063822.png",
+    iconSize: [28, 28],
+  }),
+  "On Hold": new L.Icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/463/463612.png",
+    iconSize: [26, 26],
+  }),
+  Delivered: new L.Icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
+    iconSize: [28, 28],
+  }),
+};
+
+/* ================= MOVING ICON ================= */
+const movingIcon = new L.Icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/1995/1995470.png",
+  iconSize: [32, 32],
+});
+
 export default function Track() {
   const location = useLocation();
+  const intervalRef = useRef(null);
 
   const [trackingNumber, setTrackingNumber] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,26 +64,15 @@ export default function Track() {
   const [history, setHistory] = useState([]);
   const [coords, setCoords] = useState([]);
 
-  /* ================= AUTO-FILL FROM MY QUOTES ================= */
+  /* 🟢 Animated marker */
+  const [movingIndex, setMovingIndex] = useState(0);
+
+  /* ================= AUTO-FILL ================= */
   useEffect(() => {
     if (location.state?.trackingNumber) {
       setTrackingNumber(location.state.trackingNumber);
     }
   }, [location.state]);
-
-  /* ================= CITY → COORDINATES ================= */
-  const geocodeCity = async (city) => {
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${city}`
-      );
-      const data = await res.json();
-      if (!data.length) return null;
-      return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-    } catch {
-      return null;
-    }
-  };
 
   /* ================= TRACK SHIPMENT ================= */
   const trackShipment = async () => {
@@ -66,35 +87,49 @@ export default function Track() {
       setShipment(null);
       setHistory([]);
       setCoords([]);
+      setMovingIndex(0);
 
       const res = await api.get(`/tracking/${trackingNumber}`);
 
       setShipment(res.data.shipment);
       setHistory(res.data.history);
 
-      /* ================= BUILD MAP ROUTE ================= */
-      const points = [];
-      for (const h of res.data.history) {
-        const c = await geocodeCity(h.city);
-        if (c) points.push(c);
-      }
+      const points = res.data.history
+        .filter((h) => h.lat && h.lng)
+        .map((h) => [h.lat, h.lng]);
+
       setCoords(points);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Tracking number not found"
-      );
+      setError(err.response?.data?.message || "Tracking number not found");
     } finally {
       setLoading(false);
     }
   };
 
-  /* ================= AUTO-TRACK WHEN NUMBER EXISTS ================= */
+  /* ================= AUTO-TRACK ================= */
   useEffect(() => {
     if (trackingNumber) {
       trackShipment();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [trackingNumber]);
+
+  /* ================= ANIMATE MOVEMENT ================= */
+  useEffect(() => {
+    if (coords.length < 2) return;
+
+    intervalRef.current = setInterval(() => {
+      setMovingIndex((prev) => {
+        if (prev >= coords.length - 1) {
+          clearInterval(intervalRef.current);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 1200);
+
+    return () => clearInterval(intervalRef.current);
+  }, [coords]);
 
   return (
     <section
@@ -132,30 +167,51 @@ export default function Track() {
         {coords.length > 0 && (
           <div className="map-card">
             <MapContainer
-              center={coords[coords.length - 1]}
+              center={coords[movingIndex]}
               zoom={4}
               style={{ height: "420px" }}
             >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
+              {/* 🔵 Planned route */}
+              {coords.length > 1 && (
+                <Polyline
+                  positions={[coords[0], coords[coords.length - 1]]}
+                  pathOptions={{ color: "#2563eb", weight: 3 }}
+                />
+              )}
+
+              {/* 🟡 Actual route */}
+              {coords.length > 1 && (
+                <Polyline
+                  positions={coords}
+                  pathOptions={{
+                    color: "#ffd400",
+                    weight: 4,
+                    dashArray: "8 12",
+                  }}
+                />
+              )}
+
+              {/* 📍 History markers */}
               {coords.map((c, i) => (
-                <Marker key={i} position={c}>
+                <Marker
+                  key={i}
+                  position={c}
+                  icon={statusIcons[history[i]?.status]}
+                >
                   <Popup>
                     <strong>{history[i]?.status}</strong>
                     <br />
-                    {history[i]?.city}
+                    📍 {history[i]?.city}, {history[i]?.country}
                   </Popup>
                 </Marker>
               ))}
 
-              <Polyline
-                positions={coords}
-                pathOptions={{
-                  color: "#ffd400",
-                  weight: 4,
-                  dashArray: "8 12",
-                }}
-              />
+              {/* 🚚 Animated marker */}
+              <Marker position={coords[movingIndex]} icon={movingIcon}>
+                <Popup>Shipment moving</Popup>
+              </Marker>
             </MapContainer>
           </div>
         )}
@@ -164,7 +220,6 @@ export default function Track() {
         {shipment && (
           <div className="card">
             <h3>Shipment Information</h3>
-
             <p><strong>Tracking Number:</strong> {shipment.trackingNumber}</p>
             <p><strong>Status:</strong> {shipment.status}</p>
             <p><strong>Origin:</strong> {shipment.origin}</p>
@@ -173,18 +228,6 @@ export default function Track() {
             <p><strong>Weight:</strong> {shipment.weight} kg</p>
             <p><strong>Quantity:</strong> {shipment.quantity}</p>
             <p><strong>Shipping Cost:</strong> ${shipment.price}</p>
-
-            <hr />
-
-            <h4>Sender</h4>
-            <p>{shipment.sender.name}</p>
-            <p>{shipment.sender.phone}</p>
-            <p>{shipment.sender.address}</p>
-
-            <h4>Receiver</h4>
-            <p>{shipment.receiver.name}</p>
-            <p>{shipment.receiver.phone}</p>
-            <p>{shipment.receiver.address}</p>
           </div>
         )}
 
@@ -192,17 +235,14 @@ export default function Track() {
         {history.length > 0 && (
           <div className="card">
             <h3>Shipment Timeline</h3>
-
             {history.map((h, i) => (
               <div key={i} className="history-item">
                 <strong>{h.status}</strong>
-                <div style={{ color: "#64748b" }}>{h.city}</div>
-                {h.message && (
-                  <p style={{ marginTop: 4 }}>{h.message}</p>
-                )}
-                <small>
-                  {new Date(h.createdAt).toLocaleString()}
-                </small>
+                <div style={{ color: "#64748b" }}>
+                  📍 {h.city}, {h.country}
+                </div>
+                {h.message && <p>{h.message}</p>}
+                <small>{new Date(h.createdAt).toLocaleString()}</small>
               </div>
             ))}
           </div>

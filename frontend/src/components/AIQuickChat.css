@@ -1,0 +1,117 @@
+/* ================= AI FLOATING BUTTON ================= */
+.ai-fab {
+  position: fixed;
+  bottom: 110px;
+  right: 22px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #165587;
+  color: white;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 999;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.ai-fab:hover {
+  background: #0f3f66;
+}
+
+/* ================= CHAT CONTAINER ================= */
+.ai-chat {
+  position: fixed;
+  bottom: 180px;
+  right: 22px;
+  width: 340px;
+  height: 420px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(30px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 998;
+}
+
+.ai-chat.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ================= HEADER ================= */
+.ai-header {
+  background: #165587;
+  color: white;
+  padding: 12px 14px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ================= BODY ================= */
+.ai-body {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background: #f8fafc;
+}
+
+/* ================= MESSAGES ================= */
+.ai-msg {
+  max-width: 85%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.ai-msg.user {
+  background: #165587;
+  color: white;
+  margin-left: auto;
+}
+
+.ai-msg.assistant {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+/* ================= INPUT ================= */
+.ai-input {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.ai-input input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+}
+
+.ai-input button {
+  background: #ffd400;
+  border: none;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}

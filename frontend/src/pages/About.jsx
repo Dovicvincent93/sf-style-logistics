@@ -42,15 +42,25 @@ export default function About() {
   return (
     <section className="about-page">
       {/* ================= HERO ================= */}
-      <div className="about-hero">
-        <h1>About Dovic Express</h1>
-        <p>
-          Dovic Express is a global logistics, supply chain, and technology
-          enterprise delivering secure, intelligent, and time-critical shipping
-          solutions that support modern trade, digital commerce, and enterprise
-          distribution worldwide.
-        </p>
-      </div>
+      {/* ================= HERO ================= */}
+<div className="about-hero">
+  <div className="about-hero-slider">
+    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d" alt="" />
+    <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df" alt="" />
+    <img src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088" alt="" />
+  </div>
+
+  <div className="about-hero-content">
+    <h1>About Dovic Express</h1>
+    <p>
+      Dovic Express is a global logistics, supply chain, and technology
+      enterprise delivering secure, intelligent, and time-critical shipping
+      solutions that support modern trade, digital commerce, and enterprise
+      distribution worldwide.
+    </p>
+  </div>
+</div>
+
 
       <div className="about-container">
         {/* ================= WHO WE ARE ================= */}

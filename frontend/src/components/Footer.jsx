@@ -45,8 +45,21 @@ export default function Footer() {
         {/* SUPPORT */}
         <div className="footer-column">
           <h4>Support</h4>
-          <p><strong>Hotline:</strong> +234 000 000 0000</p>
-          <p><strong>Email:</strong> support@dovicexpress.com</p>
+
+          <p className="support-item">
+            <span className="support-icon">📞</span>
+            <span>
+              <strong>Hotline:</strong> +234 000 000 0000
+            </span>
+          </p>
+
+          <p className="support-item">
+            <span className="support-icon">✉️</span>
+            <span>
+              <strong>Email:</strong> support@dovicexpress.com
+            </span>
+          </p>
+
           <a href="/faqs">FAQs</a>
           <a href="/claims">Claims & Insurance</a>
         </div>
@@ -92,16 +105,18 @@ export default function Footer() {
 
       {/* ================= FOOTER BOTTOM ================= */}
       <div className="footer-bottom">
-        <p>
-          © {new Date().getFullYear()} Dovic Express. All rights reserved.
-        </p>
+        <div className="footer-bottom-inner">
+          <p className="footer-copy">
+            © {new Date().getFullYear()} Dovic Express. All rights reserved.
+          </p>
 
-        <div className="footer-legal">
-          <a href="/terms">Terms of Use</a>
-          <span>|</span>
-          <a href="/privacy">Privacy Policy</a>
-          <span>|</span>
-          <a href="/compliance">Compliance</a>
+          <div className="footer-legal">
+            <a href="/terms">Terms of Use</a>
+            <span>|</span>
+            <a href="/privacy">Privacy Policy</a>
+            <span>|</span>
+            <a href="/compliance">Compliance</a>
+          </div>
         </div>
 
         {/* SOCIAL LINKS */}

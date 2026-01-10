@@ -8,17 +8,30 @@ export default function AdminLayout() {
 
   /* ================= FETCH UNREAD INBOX COUNT ================= */
   useEffect(() => {
+    let isMounted = true;
+
     const fetchUnreadCount = async () => {
       try {
         const res = await api.get("/admin/inbox/unread-count");
-        setUnreadCount(res.data.count || 0);
+        if (isMounted) {
+          setUnreadCount(res.data?.count || 0);
+        }
       } catch (error) {
         // silent fail – don't break admin UI
         console.error("Failed to load inbox count");
       }
     };
 
+    // initial fetch
     fetchUnreadCount();
+
+    // poll every 30 seconds
+    const interval = setInterval(fetchUnreadCount, 30000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   return (

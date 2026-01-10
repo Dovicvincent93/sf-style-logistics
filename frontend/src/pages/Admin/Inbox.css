@@ -1,69 +1,211 @@
+/* =========================
+   INBOX PAGE
+========================= */
 .inbox-page {
-  max-width: 900px;
+  max-width: 100%;
 }
 
+/* =========================
+   LIST
+========================= */
 .inbox-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
+/* =========================
+   CARD
+========================= */
 .inbox-card {
-  background: white;
+  background: #ffffff;
+  border-radius: 14px;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
   border-left: 5px solid transparent;
 }
 
 .inbox-card.unread {
   border-left-color: #ffd400;
-  background: #fffbea;
+  background: #fffdf3;
 }
 
 .inbox-card.read {
-  opacity: 0.85;
+  opacity: 0.95;
 }
 
+/* =========================
+   HEADER
+========================= */
 .inbox-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
   margin-bottom: 8px;
+}
+
+.inbox-header strong {
   font-size: 15px;
+  color: #0f172a;
 }
 
 .inbox-header span {
-  color: #64748b;
   font-size: 13px;
+  color: #64748b;
 }
 
+/* =========================
+   SUBJECT
+========================= */
 .inbox-subject {
+  font-size: 14px;
   margin-bottom: 8px;
   color: #334155;
 }
 
+/* =========================
+   MESSAGE
+========================= */
 .inbox-message {
-  margin: 10px 0;
   line-height: 1.6;
-  color: #0f172a;
+  margin-bottom: 14px;
+  color: #334155;
+  white-space: pre-wrap;
 }
 
+/* =========================
+   REPLIES
+========================= */
+.inbox-replies {
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.inbox-replies h4 {
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.reply-item {
+  border-left: 3px solid #165587;
+  padding-left: 10px;
+  margin-bottom: 8px;
+}
+
+.reply-item p {
+  margin: 0;
+}
+
+.reply-item small {
+  color: #64748b;
+}
+
+/* =========================
+   REPLY BOX
+========================= */
+.reply-box {
+  margin-top: 12px;
+}
+
+.reply-box textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.reply-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.reply-actions button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.reply-actions button:first-child {
+  background: #165587;
+  color: white;
+}
+
+.reply-actions button.cancel {
+  background: #e5e7eb;
+}
+
+/* =========================
+   FOOTER
+========================= */
 .inbox-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
 }
 
-.inbox-footer button {
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: none;
-  background: #165587;
-  color: white;
+.inbox-footer small {
+  color: #64748b;
   font-size: 12px;
-  cursor: pointer;
 }
 
-.inbox-footer button:hover {
-  opacity: 0.9;
+.inbox-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.inbox-actions button {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #0f3f66;
+  color: white;
+}
+
+.inbox-actions button:hover {
+  background: #020617;
+}
+
+/* =========================
+   MOBILE FIX
+========================= */
+@media (max-width: 768px) {
+  .inbox-card {
+    padding: 16px;
+  }
+
+  .inbox-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reply-actions,
+  .inbox-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .reply-actions button,
+  .inbox-actions button {
+    width: 100%;
+  }
+
+  .inbox-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

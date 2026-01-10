@@ -5,14 +5,17 @@ export default function Careers() {
     <section className="careers-page">
       {/* ================= HERO ================= */}
       <div className="careers-hero">
-        <h1>Careers at Dovic Express</h1>
-        <p>
-          Build the future of global logistics with a company driven by
-          technology, scale, and operational excellence. At Dovic Express, your
-          work directly supports international trade, digital commerce, and
-          critical supply chains across the world.
-        </p>
-      </div>
+  <div className="careers-hero-content">
+    <h1>Careers at Dovic Express</h1>
+    <p>
+      Build the future of global logistics with a company driven by
+      technology, scale, and operational excellence. At Dovic Express, your
+      work directly supports international trade, digital commerce, and
+      critical supply chains across the world.
+    </p>
+  </div>
+</div>
+
 
       <div className="careers-container">
         {/* ================= WHY JOIN ================= */}

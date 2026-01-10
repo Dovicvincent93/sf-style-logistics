@@ -5,12 +5,15 @@ export default function Compliance() {
     <section className="compliance-page">
       {/* ================= HERO ================= */}
       <div className="compliance-hero">
-        <h1>Compliance & Certifications</h1>
-        <p>
-          Upholding global standards of integrity, security, safety, and
-          regulatory excellence across our logistics operations.
-        </p>
-      </div>
+  <div className="compliance-hero-content">
+    <h1>Compliance & Certifications</h1>
+    <p>
+      Upholding global standards of integrity, security, safety, and
+      regulatory excellence across our logistics operations.
+    </p>
+  </div>
+</div>
+
 
       <div className="compliance-container">
         {/* ================= INTRO ================= */}

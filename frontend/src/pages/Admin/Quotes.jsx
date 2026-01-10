@@ -1,22 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../../api/axios";
+
+const FILTERS = [
+  "All",
+  "Pending",
+  "Priced",
+  "Accepted",
+  "Converted",
+  "Rejected",
+];
 
 export default function Quotes() {
   const [quotes, setQuotes] = useState([]);
+  const [prices, setPrices] = useState({});
   const [loadingId, setLoadingId] = useState(null);
-  const [prices, setPrices] = useState({}); // store edited prices
+  const [activeFilter, setActiveFilter] = useState("All");
 
+  /* ===============================
+     LOAD QUOTES (ADMIN)
+  =============================== */
   const loadQuotes = async () => {
     try {
       const res = await api.get("/quotes");
-      setQuotes(res.data);
+      const data = res.data || [];
+      setQuotes(data);
 
-      // initialize price inputs
-      const initialPrices = {};
-      res.data.forEach((q) => {
-        initialPrices[q._id] = q.price || 0;
+      const priceMap = {};
+      data.forEach((q) => {
+        priceMap[q._id] = q.price || "";
       });
-      setPrices(initialPrices);
+      setPrices(priceMap);
     } catch (error) {
       console.error("Failed to load quotes", error);
     }
@@ -27,29 +40,63 @@ export default function Quotes() {
   }, []);
 
   /* ===============================
-     UPDATE PRICE (ADMIN)
+     FILTERED QUOTES
   =============================== */
-  const updatePrice = async (id) => {
+  const filteredQuotes = useMemo(() => {
+    if (activeFilter === "All") return quotes;
+    return quotes.filter((q) => q.status === activeFilter);
+  }, [quotes, activeFilter]);
+
+  /* ===============================
+     STATUS COUNTS (FOR TABS)
+  =============================== */
+  const counts = useMemo(() => {
+    const c = { All: quotes.length };
+    FILTERS.forEach((f) => (c[f] = 0));
+    quotes.forEach((q) => {
+      c[q.status] = (c[q.status] || 0) + 1;
+    });
+    return c;
+  }, [quotes]);
+
+  /* ===============================
+     SET PRICE (ADMIN)
+  =============================== */
+  const setPrice = async (id) => {
+    if (!prices[id] || Number(prices[id]) <= 0) {
+      alert("Please enter a valid price");
+      return;
+    }
+
     try {
-      await api.patch(`/quotes/${id}`, {
+      setLoadingId(id);
+      await api.patch(`/quotes/${id}/price`, {
         price: Number(prices[id]),
       });
+      await loadQuotes();
     } catch (error) {
-      console.error("Price update failed", error.response?.data || error.message);
-      alert("Failed to update price");
+      alert(
+        error.response?.data?.message || "Failed to price quote"
+      );
+    } finally {
+      setLoadingId(null);
     }
   };
 
   /* ===============================
-     REJECT QUOTE
+     REJECT QUOTE (ADMIN)
   =============================== */
-  const reject = async (id) => {
+  const rejectQuote = async (id) => {
+    const confirmReject = window.confirm(
+      "Are you sure you want to reject this quote?"
+    );
+    if (!confirmReject) return;
+
     try {
       setLoadingId(id);
       await api.patch(`/quotes/${id}/reject`);
       await loadQuotes();
-    } catch (error) {
-      console.error("Reject failed", error.response?.data || error.message);
+    } catch {
       alert("Failed to reject quote");
     } finally {
       setLoadingId(null);
@@ -57,36 +104,24 @@ export default function Quotes() {
   };
 
   /* ===============================
-     APPROVE + CONVERT TO SHIPMENT
+     CONVERT TO SHIPMENT (ADMIN)
+     ✔ ONLY WHEN ACCEPTED
   =============================== */
-  const approveAndConvert = async (id) => {
+  const convertToShipment = async (id) => {
+    const confirmConvert = window.confirm(
+      "Convert this accepted quote to a shipment?"
+    );
+    if (!confirmConvert) return;
+
     try {
       setLoadingId(id);
-
-      // 🔴 Ensure price is set
-      if (!prices[id] || Number(prices[id]) <= 0) {
-        alert("Please set a valid price before approving");
-        setLoadingId(null);
-        return;
-      }
-
-      // 1️⃣ Save price
-      await updatePrice(id);
-
-      // 2️⃣ Approve
-      await api.patch(`/quotes/${id}/approve`);
-
-      // 3️⃣ Convert to shipment
       await api.post(`/quotes/${id}/convert`);
-
-      alert("Quote approved and shipment created");
       await loadQuotes();
     } catch (error) {
-      console.error(
-        "Approve/Convert failed",
-        error.response?.data || error.message
+      alert(
+        error.response?.data?.message ||
+          "Failed to convert quote"
       );
-      alert("Failed to approve and convert quote");
     } finally {
       setLoadingId(null);
     }
@@ -96,83 +131,158 @@ export default function Quotes() {
     <div className="admin-page">
       <h2>Quote Requests</h2>
 
+      {/* ================= FILTER TABS ================= */}
+      <div
+        style={{
+          display: "flex",
+          gap: 8,
+          marginBottom: 18,
+          flexWrap: "wrap",
+        }}
+      >
+        {FILTERS.map((f) => (
+          <button
+            key={f}
+            onClick={() => setActiveFilter(f)}
+            style={{
+              padding: "8px 14px",
+              borderRadius: 999,
+              border: "none",
+              cursor: "pointer",
+              fontWeight: 600,
+              background:
+                activeFilter === f ? "#ffd400" : "#e5e7eb",
+              color: activeFilter === f ? "#000" : "#334155",
+            }}
+          >
+            {f} ({counts[f] || 0})
+          </button>
+        ))}
+      </div>
+
+      {/* ================= TABLE ================= */}
       <table className="admin-table">
         <thead>
           <tr>
             <th>Pickup</th>
             <th>Destination</th>
             <th>Weight</th>
-            <th>Fix Price</th>
+            <th>Price</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          {quotes.map((q) => (
-            <tr key={q._id}>
-              <td>{q.pickup}</td>
-              <td>{q.destination}</td>
-              <td>{q.weight}kg</td>
-
-              {/* PRICE INPUT */}
-              <td>
-                {q.status === "Pending" ? (
-                  <input
-                    type="number"
-                    value={prices[q._id] || ""}
-                    onChange={(e) =>
-                      setPrices({
-                        ...prices,
-                        [q._id]: e.target.value,
-                      })
-                    }
-                    style={{ width: "80px" }}
-                  />
-                ) : (
-                  <>${q.price}</>
-                )}
-              </td>
-
-              <td>{q.status}</td>
-
-              <td>
-                {q.status === "Pending" && (
-                  <>
-                    <button
-                      onClick={() => approveAndConvert(q._id)}
-                      disabled={loadingId === q._id}
-                      style={{ marginRight: "8px" }}
-                    >
-                      {loadingId === q._id
-                        ? "Processing..."
-                        : "Approve & Convert"}
-                    </button>
-
-                    <button
-                      onClick={() => reject(q._id)}
-                      disabled={loadingId === q._id}
-                      style={{ background: "red", color: "white" }}
-                    >
-                      Reject
-                    </button>
-                  </>
-                )}
-
-                {q.status === "Converted" && (
-                  <span style={{ color: "green", fontWeight: "bold" }}>
-                    Shipment Created
-                  </span>
-                )}
-
-                {q.status === "Rejected" && (
-                  <span style={{ color: "red", fontWeight: "bold" }}>
-                    Rejected
-                  </span>
-                )}
+          {filteredQuotes.length === 0 ? (
+            <tr>
+              <td colSpan="6" style={{ textAlign: "center" }}>
+                No quotes in this category
               </td>
             </tr>
-          ))}
+          ) : (
+            filteredQuotes.map((q) => (
+              <tr key={q._id}>
+                <td>{q.pickup}</td>
+                <td>{q.destination}</td>
+                <td>{q.weight} kg</td>
+
+                {/* PRICE */}
+                <td>
+                  {q.status === "Pending" ? (
+                    <input
+                      type="number"
+                      value={prices[q._id] || ""}
+                      onChange={(e) =>
+                        setPrices({
+                          ...prices,
+                          [q._id]: e.target.value,
+                        })
+                      }
+                      style={{ width: 90 }}
+                    />
+                  ) : q.price ? (
+                    `$${q.price}`
+                  ) : (
+                    "—"
+                  )}
+                </td>
+
+                {/* STATUS */}
+                <td>
+                  <span
+                    className={`status ${q.status.toLowerCase()}`}
+                  >
+                    {q.status}
+                  </span>
+                </td>
+
+                {/* ACTIONS */}
+                <td>
+                  {q.status === "Pending" && (
+                    <>
+                      <button
+                        onClick={() => setPrice(q._id)}
+                        disabled={loadingId === q._id}
+                      >
+                        Set Price
+                      </button>
+
+                      <button
+                        onClick={() => rejectQuote(q._id)}
+                        disabled={loadingId === q._id}
+                        style={{
+                          background: "red",
+                          color: "white",
+                        }}
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+
+                  {q.status === "Priced" && (
+                    <span style={{ color: "#92400e" }}>
+                      Waiting for customer
+                    </span>
+                  )}
+
+                  {q.status === "Accepted" && (
+                    <button
+                      onClick={() =>
+                        convertToShipment(q._id)
+                      }
+                      disabled={loadingId === q._id}
+                    >
+                      Convert to Shipment
+                    </button>
+                  )}
+
+                  {q.status === "Converted" && (
+                    <span
+                      style={{
+                        color: "green",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Shipment Created
+                    </span>
+                  )}
+
+                  {q.status === "Rejected" && (
+                    <span
+                      style={{
+                        color: "red",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Rejected
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

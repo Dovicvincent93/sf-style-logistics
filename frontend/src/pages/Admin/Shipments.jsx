@@ -1,13 +1,12 @@
 import { useEffect, useState, Fragment } from "react";
 import api from "../../api/axios";
 
+/* ================= ALLOWED ADMIN STATUSES ================= */
 const STATUS_OPTIONS = [
-  "Pending",
   "In Transit",
-  "Custom Clearance",
+  "Customs Clearance",
   "On Hold",
   "Out for Delivery",
-  "Delivered",
 ];
 
 export default function Shipments() {
@@ -17,22 +16,37 @@ export default function Shipments() {
   const [updatingId, setUpdatingId] = useState(null);
 
   /* ================= CREATE ORDER STATE ================= */
-  const [sender, setSender] = useState({ name: "", phone: "", address: "" });
-  const [receiver, setReceiver] = useState({ name: "", phone: "", address: "" });
-  const [origin, setOrigin] = useState("");
-  const [destination, setDestination] = useState("");
-  const [weight, setWeight] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [estimatedDelivery, setEstimatedDelivery] =
-    useState("6–10 business days");
-  const [price, setPrice] = useState("");
-  const [city, setCity] = useState("");
-  const [message, setMessage] = useState("");
+  const [sender, setSender] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+  });
+
+  const [receiver, setReceiver] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+  });
+
+  const [shipmentInfo, setShipmentInfo] = useState({
+    origin: "",
+    destination: "",
+    weight: "",
+    quantity: 1,
+    estimatedDelivery: "6–10 business days",
+    price: "",
+    city: "",
+    country: "",
+    message: "",
+  });
 
   /* ================= UPDATE STATE ================= */
   const [updateData, setUpdateData] = useState({
     status: "",
     city: "",
+    country: "",
     message: "",
   });
 
@@ -63,20 +77,35 @@ export default function Shipments() {
 
   /* ================= CREATE SHIPMENT ================= */
   const createShipment = async () => {
+    const {
+      origin,
+      destination,
+      weight,
+      quantity,
+      estimatedDelivery,
+      price,
+      city,
+      country,
+      message,
+    } = shipmentInfo;
+
     if (
       !sender.name ||
       !sender.phone ||
+      !sender.email ||
       !sender.address ||
       !receiver.name ||
       !receiver.phone ||
+      !receiver.email ||
       !receiver.address ||
       !origin ||
       !destination ||
       !weight ||
       !price ||
-      !city
+      !city ||
+      !country
     ) {
-      alert("Please fill all required shipment details");
+      alert("Please fill all required fields");
       return;
     }
 
@@ -90,39 +119,57 @@ export default function Shipments() {
       estimatedDelivery,
       price: Number(price),
       city,
+      country,
       message,
     });
 
-    setSender({ name: "", phone: "", address: "" });
-    setReceiver({ name: "", phone: "", address: "" });
-    setOrigin("");
-    setDestination("");
-    setWeight("");
-    setQuantity(1);
-    setPrice("");
-    setCity("");
-    setMessage("");
+    setSender({ name: "", phone: "", email: "", address: "" });
+    setReceiver({ name: "", phone: "", email: "", address: "" });
+    setShipmentInfo({
+      origin: "",
+      destination: "",
+      weight: "",
+      quantity: 1,
+      estimatedDelivery: "6–10 business days",
+      price: "",
+      city: "",
+      country: "",
+      message: "",
+    });
 
     loadShipments();
   };
 
   /* ================= UPDATE STATUS ================= */
   const submitUpdate = async (id) => {
-    const { status, city, message } = updateData;
+    const { status, city, country, message } = updateData;
 
-    if (!status || !city) {
-      alert("Status and city are required");
+    if (!status || !city || !country) {
+      alert("Status, city and country are required");
       return;
     }
 
-    await api.put(`/shipments/${id}/status`, {
+    await api.patch(`/shipments/${id}/status`, {
       status,
       city,
+      country,
       message,
     });
 
     setUpdatingId(null);
-    setUpdateData({ status: "", city: "", message: "" });
+    setUpdateData({ status: "", city: "", country: "", message: "" });
+    loadShipments();
+  };
+
+  /* ================= DELETE SHIPMENT ================= */
+  const deleteShipment = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure? This will permanently delete the shipment and its tracking history."
+    );
+
+    if (!confirmDelete) return;
+
+    await api.delete(`/shipments/${id}`);
     loadShipments();
   };
 
@@ -134,84 +181,114 @@ export default function Shipments() {
       <div className="admin-card">
         <h3>Create Shipment (Admin Order)</h3>
 
-        <h4>Sender</h4>
-        <input placeholder="Name" value={sender.name}
-          onChange={(e) => setSender({ ...sender, name: e.target.value })} />
-        <input placeholder="Phone" value={sender.phone}
-          onChange={(e) => setSender({ ...sender, phone: e.target.value })} />
-        <input placeholder="Address" value={sender.address}
-          onChange={(e) => setSender({ ...sender, address: e.target.value })} />
+        <div className="shipment-form-grid">
+          {/* SENDER */}
+          <div className="shipment-box">
+            <h4>Sender Information</h4>
+            <input placeholder="Name" value={sender.name}
+              onChange={(e) => setSender({ ...sender, name: e.target.value })} />
+            <input placeholder="Phone" value={sender.phone}
+              onChange={(e) => setSender({ ...sender, phone: e.target.value })} />
+            <input placeholder="Email" value={sender.email}
+              onChange={(e) => setSender({ ...sender, email: e.target.value })} />
+            <input placeholder="Address" value={sender.address}
+              onChange={(e) => setSender({ ...sender, address: e.target.value })} />
+          </div>
 
-        <h4>Receiver</h4>
-        <input placeholder="Name" value={receiver.name}
-          onChange={(e) => setReceiver({ ...receiver, name: e.target.value })} />
-        <input placeholder="Phone" value={receiver.phone}
-          onChange={(e) => setReceiver({ ...receiver, phone: e.target.value })} />
-        <input placeholder="Address" value={receiver.address}
-          onChange={(e) => setReceiver({ ...receiver, address: e.target.value })} />
+          {/* RECEIVER */}
+          <div className="shipment-box">
+            <h4>Receiver Information</h4>
+            <input placeholder="Name" value={receiver.name}
+              onChange={(e) => setReceiver({ ...receiver, name: e.target.value })} />
+            <input placeholder="Phone" value={receiver.phone}
+              onChange={(e) => setReceiver({ ...receiver, phone: e.target.value })} />
+            <input placeholder="Email" value={receiver.email}
+              onChange={(e) => setReceiver({ ...receiver, email: e.target.value })} />
+            <input placeholder="Address" value={receiver.address}
+              onChange={(e) => setReceiver({ ...receiver, address: e.target.value })} />
+          </div>
 
-        <input placeholder="Origin" value={origin}
-          onChange={(e) => setOrigin(e.target.value)} />
-        <input placeholder="Destination" value={destination}
-          onChange={(e) => setDestination(e.target.value)} />
-        <input placeholder="Weight (kg)" type="number" value={weight}
-          onChange={(e) => setWeight(e.target.value)} />
-        <input placeholder="Quantity" type="number" value={quantity}
-          onChange={(e) => setQuantity(e.target.value)} />
-        <input placeholder="Estimated delivery" value={estimatedDelivery}
-          onChange={(e) => setEstimatedDelivery(e.target.value)} />
-        <input placeholder="Price" type="number" value={price}
-          onChange={(e) => setPrice(e.target.value)} />
-        <input placeholder="Starting city" value={city}
-          onChange={(e) => setCity(e.target.value)} />
-        <input placeholder="Admin note (optional)" value={message}
-          onChange={(e) => setMessage(e.target.value)} />
+          {/* SHIPMENT */}
+          <div className="shipment-box">
+            <h4>Shipment Information</h4>
+            <input placeholder="Origin" value={shipmentInfo.origin}
+              onChange={(e) => setShipmentInfo({ ...shipmentInfo, origin: e.target.value })} />
+            <input placeholder="Destination" value={shipmentInfo.destination}
+              onChange={(e) => setShipmentInfo({ ...shipmentInfo, destination: e.target.value })} />
+            <input placeholder="Weight (kg)" type="number" value={shipmentInfo.weight}
+              onChange={(e) => setShipmentInfo({ ...shipmentInfo, weight: e.target.value })} />
+            <input placeholder="Quantity" type="number" value={shipmentInfo.quantity}
+              onChange={(e) => setShipmentInfo({ ...shipmentInfo, quantity: e.target.value })} />
+            <input placeholder="Estimated delivery" value={shipmentInfo.estimatedDelivery}
+              onChange={(e) => setShipmentInfo({ ...shipmentInfo, estimatedDelivery: e.target.value })} />
+            <input placeholder="Price" type="number" value={shipmentInfo.price}
+              onChange={(e) => setShipmentInfo({ ...shipmentInfo, price: e.target.value })} />
+            <input placeholder="City" value={shipmentInfo.city}
+              onChange={(e) => setShipmentInfo({ ...shipmentInfo, city: e.target.value })} />
+            <input placeholder="Country" value={shipmentInfo.country}
+              onChange={(e) => setShipmentInfo({ ...shipmentInfo, country: e.target.value })} />
+            <input placeholder="Admin note (optional)" value={shipmentInfo.message}
+              onChange={(e) => setShipmentInfo({ ...shipmentInfo, message: e.target.value })} />
+          </div>
+        </div>
 
-        <button onClick={createShipment}>Create Order</button>
+        <div className="shipment-actions">
+          <button onClick={createShipment}>Create Order</button>
+        </div>
       </div>
 
       {/* ================= SHIPMENTS TABLE ================= */}
       <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Tracking</th>
-            <th>Sender → Receiver</th>
-            <th>Destination</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
         <tbody>
           {shipments.map((s) => (
             <Fragment key={s._id}>
               <tr>
-                <td>{s.trackingNumber}</td>
+                <td><strong>{s.trackingNumber}</strong></td>
+
                 <td>
-                  {(s.sender?.name || "—")} → {(s.receiver?.name || "—")}
+                  <div><strong>Sender:</strong> {s.sender?.name}</div>
+                  <div><strong>Receiver:</strong> {s.receiver?.name}</div>
                 </td>
-                <td>{s.destination}</td>
+
                 <td>
-                  <strong>{s.status}</strong>
-                  {s.isDelivered && (
-                    <div style={{ color: "green", fontSize: 12 }}>
-                      Delivered (Locked)
-                    </div>
-                  )}
+                  <div>{s.origin} → {s.destination}</div>
+                  <div>{s.weight}kg</div>
                 </td>
+
+                {/* STATUS BADGE */}
+                <td>
+                  <span
+                    className={`status ${s.status
+                      .toLowerCase()
+                      .replaceAll(" ", "-")}`}
+                  >
+                    {s.status}
+                  </span>
+                </td>
+
                 <td>
                   <button onClick={() => loadHistory(s.trackingNumber, s._id)}>
                     {expandedId === s._id ? "Hide History" : "View History"}
                   </button>
 
+                  {/* ❌ Disable update if Delivered */}
                   {!s.isDelivered && (
                     <button onClick={() => setUpdatingId(s._id)}>
                       Update Status
                     </button>
                   )}
+
+                  {/* 🗑️ DELETE SHIPMENT */}
+                  <button
+                    style={{ background: "#991b1b" }}
+                    onClick={() => deleteShipment(s._id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
 
+              {/* UPDATE STATUS PANEL */}
               {updatingId === s._id && (
                 <tr>
                   <td colSpan="5">
@@ -228,10 +305,18 @@ export default function Shipments() {
                     </select>
 
                     <input
-                      placeholder="Current city"
+                      placeholder="City"
                       value={updateData.city}
                       onChange={(e) =>
                         setUpdateData({ ...updateData, city: e.target.value })
+                      }
+                    />
+
+                    <input
+                      placeholder="Country"
+                      value={updateData.country}
+                      onChange={(e) =>
+                        setUpdateData({ ...updateData, country: e.target.value })
                       }
                     />
 
@@ -249,13 +334,14 @@ export default function Shipments() {
                 </tr>
               )}
 
+              {/* HISTORY */}
               {expandedId === s._id && historyMap[s._id] && (
                 <tr>
                   <td colSpan="5">
                     {historyMap[s._id].map((h, i) => (
-                      <div key={i} style={{ marginBottom: 10 }}>
-                        <strong>{h.status}</strong>
-                        <div>{h.city}</div>
+                      <div key={i} className="history-item">
+                        <strong>📍 {h.city}, {h.country}</strong>
+                        <div>{h.status}</div>
                         {h.message && <div>{h.message}</div>}
                         <small>{new Date(h.createdAt).toLocaleString()}</small>
                       </div>

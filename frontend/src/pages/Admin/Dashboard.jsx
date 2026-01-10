@@ -13,7 +13,7 @@ export default function Dashboard() {
       try {
         const res = await api.get("/admin/dashboard");
         setStats(res.data.stats);
-        setShipments(res.data.recentShipments);
+        setShipments(res.data.recentShipments || []);
       } catch (err) {
         console.error(err);
         setError("Failed to load dashboard data");
@@ -51,35 +51,26 @@ export default function Dashboard() {
           <p>No shipments yet.</p>
         ) : (
           <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Tracking</th>
-                <th>Sender</th>
-                <th>Receiver</th>
-                <th>Destination</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-
             <tbody>
               {shipments.map((s) => (
                 <tr key={s._id}>
-                  <td>
+                  <td data-label="Tracking">
                     <strong>{s.trackingNumber}</strong>
                   </td>
 
-                  <td>
+                  <td data-label="Sender">
                     {s.sender?.name || "—"}
                   </td>
 
-                  <td>
+                  <td data-label="Receiver">
                     {s.receiver?.name || "—"}
                   </td>
 
-                  <td>{s.destination}</td>
+                  <td data-label="Destination">
+                    {s.destination}
+                  </td>
 
-                  <td>
+                  <td data-label="Status">
                     <span
                       className={`status ${s.status
                         .toLowerCase()
@@ -89,7 +80,7 @@ export default function Dashboard() {
                     </span>
                   </td>
 
-                  <td>
+                  <td data-label="Date">
                     {new Date(s.createdAt).toLocaleDateString()}
                   </td>
                 </tr>

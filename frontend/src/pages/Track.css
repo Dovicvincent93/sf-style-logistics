@@ -1,0 +1,136 @@
+/* ================= TRACK PAGE ENHANCEMENTS ================= */
+
+/* Card base (used everywhere already) */
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px;
+  margin-top: 30px;
+  box-shadow: 0 14px 35px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 55px rgba(0,0,0,0.15);
+}
+
+/* Input + Button */
+.card input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 16px;
+  margin-bottom: 14px;
+  transition: border 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card input:focus {
+  outline: none;
+  border-color: #165587;
+  box-shadow: 0 0 0 3px rgba(22,85,135,0.25);
+}
+
+.card button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  background: #ffd400;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+}
+
+.card button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Map container */
+.map-card {
+  margin-top: 40px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.18);
+  animation: fadeUp 0.6s ease forwards;
+}
+
+/* Shipment information typography */
+.card h3 {
+  color: rgb(22, 85, 135);
+  margin-bottom: 18px;
+}
+
+.card h4 {
+  margin-top: 20px;
+  color: rgb(22, 85, 135);
+}
+
+.card p {
+  margin: 6px 0;
+  line-height: 1.6;
+}
+
+/* Timeline */
+.history-item {
+  position: relative;
+  padding-left: 26px;
+  padding-bottom: 18px;
+  margin-top: 18px;
+  border-left: 2px solid #e5e7eb;
+}
+
+.history-item::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  background: #ffd400;
+  border-radius: 50%;
+}
+
+.history-item strong {
+  color: rgb(22, 85, 135);
+}
+
+.history-item small {
+  display: block;
+  margin-top: 6px;
+  color: #64748b;
+}
+
+/* Page entrance animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Smoothness */
+.card,
+.map-card,
+.history-item {
+  will-change: transform;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    padding: 22px;
+  }
+}
