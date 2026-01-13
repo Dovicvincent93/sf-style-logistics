@@ -837,3 +837,28 @@ body {
   padding-left: 24px;
   padding-right: 24px;
 }
+
+/* ================= MOBILE FULL-WIDTH FIX ================= */
+@media (max-width: 768px) {
+
+  /* Remove percentage padding that causes shrink */
+  .services,
+  .industries {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Normalize all main sections */
+  .capabilities-grid,
+  .image-text-grid,
+  .process-grid,
+  .global-stats,
+  .world-map,
+  .services-rich,
+  .services-expanded,
+  .why-us {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    max-width: 100% !important;
+  }
+}

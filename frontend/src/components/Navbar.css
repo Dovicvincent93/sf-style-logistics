@@ -234,3 +234,11 @@
     height: 30px;
   }
 }
+
+/* ================= MOBILE FULL-WIDTH FIX ================= */
+@media (max-width: 768px) {
+  .nav-inner {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
