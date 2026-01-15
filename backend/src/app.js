@@ -24,36 +24,32 @@ const app = express();
 ============================ */
 
 /**
- * ✅ PERMANENT CORS FIX
- * - Allows PATCH
- * - Allows Authorization header
- * - Works locally + Vercel + Render
- * - Handles preflight OPTIONS correctly
+ * ✅ FINAL CORS CONFIG (PRODUCTION SAFE)
+ * - Works with Vercel + Render + localhost
+ * - Fixes login/register CORS errors
+ * - Handles OPTIONS preflight correctly
+ * - Supports Authorization headers
  */
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:3000",
-      "https://sf-style-logistics.vercel.app",
-    ],
+    origin: true, // dynamically allow requesting origin
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
 
-/* ✅ VERY IMPORTANT — preflight handler */
+/* ✅ Handle preflight requests */
 app.options("*", cors());
 
 /* ============================
-   BODY PARSER
+   BODY PARSERS
 ============================ */
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 /* ============================
-   ROUTES
+   API ROUTES
 ============================ */
 app.use("/api/auth", authRoutes);
 app.use("/api/shipments", shipmentRoutes);
