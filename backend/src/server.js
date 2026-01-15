@@ -13,15 +13,21 @@ const __dirname = path.dirname(__filename);
 /* =========================
    LOAD ENV FROM ROOT
 ========================= */
-dotenv.config({
-  path: path.resolve(__dirname, "../.env"),
-});
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({
+    path: path.resolve(__dirname, "../.env"),
+  });
+}
+
 
 /* =========================
    DEBUG (TEMPORARY)
 ========================= */
-console.log("📦 MONGO_URI:", process.env.MONGO_URI);
-console.log("📧 RESEND_API_KEY:", process.env.RESEND_API_KEY ? "LOADED" : "MISSING");
+if (process.env.NODE_ENV !== "production") {
+  console.log("📦 MONGO_URI:", process.env.MONGO_URI);
+  console.log("📧 RESEND_API_KEY:", process.env.RESEND_API_KEY ? "LOADED" : "MISSING");
+}
+
 
 
 const PORT = process.env.PORT || 5000;
