@@ -67,7 +67,7 @@ section {
   color: white;
 
   /* ✅ visual shift only */
-  transform: translateX(30px);
+  transform: translateX(10px);
 }
 
 
